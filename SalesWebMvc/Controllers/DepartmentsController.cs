@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SalesWebMvc.Models;
 
+
 namespace SalesWebMvc.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly SalesWebMvcContext _context;
+        private readonly SalesWebMvcContext _context;        
 
         public DepartmentsController(SalesWebMvcContext context)
         {
@@ -44,7 +45,7 @@ namespace SalesWebMvc.Controllers
 
         // GET: Departments/Create
         public IActionResult Create()
-        {
+        {            
             return View();
         }
 
