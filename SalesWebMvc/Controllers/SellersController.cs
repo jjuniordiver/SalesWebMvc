@@ -60,7 +60,7 @@ namespace SalesWebMvc.Controllers
 
             var obj = await _sellerService.FindByIdAsync(id.Value);
 
-            if(obj == null)
+            if (obj == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
@@ -73,14 +73,21 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _sellerService.RemoveAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _sellerService.RemoveAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (IntegrityException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
         }
 
         // GET: Sellers/Details
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
@@ -111,7 +118,7 @@ namespace SalesWebMvc.Controllers
             }
 
             List<Department> departments = await _departmentService.FindAllAsync();
-            SellerFormViewModel viewModel = new SellerFormViewModel { Seller =obj, Departments = departments};
+            SellerFormViewModel viewModel = new SellerFormViewModel { Seller = obj, Departments = departments };
             return View(viewModel);
         }
 
@@ -140,13 +147,14 @@ namespace SalesWebMvc.Controllers
             catch (ApplicationException e)
             {
                 return RedirectToAction(nameof(Error), new { message = e.Message });
-            }            
+            }
         }
 
         public IActionResult Error(string message)
         {
-            var viewModel = new ErrorViewModel { 
-                Message = message, 
+            var viewModel = new ErrorViewModel
+            {
+                Message = message,
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             };
             return View(viewModel);
